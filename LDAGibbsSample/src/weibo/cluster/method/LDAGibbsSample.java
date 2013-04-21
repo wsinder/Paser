@@ -1,5 +1,11 @@
 package weibo.cluster.method;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import weibo.cluster.configure.LDAModelParameters;
 import weibo.cluster.data.Documents;
 
@@ -173,5 +179,56 @@ public class LDAGibbsSample {
 			}
 		}
 		return phi;
+	}
+	
+	public static void main(String [] args){
+		
+		Documents docSet = new Documents();
+		List<String> texts = new ArrayList<String>();
+		try {
+			docSet.readDocs(texts);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		LDAGibbsSample ldaTest = new LDAGibbsSample();
+		ldaTest.gibbsSample(docSet);
+		
+		double [][] phi = ldaTest.getPhi();
+		int topNum = 20;
+		
+		for(int i = 0; i < ldaTest.K; i++){
+			
+			List<Integer> tWordsIndexArray = new ArrayList<Integer>();
+			for(int j = 1; j <= ldaTest.V; j++){
+				tWordsIndexArray.add(new Integer(j));
+			}
+			Collections.sort(tWordsIndexArray, new LDAGibbsSample.TwordsComparable(phi[i]));
+			System.out.println("topic " + i + ":");
+			for(int k = 0; k < topNum; k++){
+				System.out.println(tWordsIndexArray.get(k) + ". " + phi[i][tWordsIndexArray.get(k)]);
+			}
+		}
+		
+	}
+	
+	public static class TwordsComparable implements Comparator<Integer>{
+		public double[] sortProb;
+		
+		public TwordsComparable(double[] sortProb){
+			this.sortProb = sortProb;
+		}
+
+		@Override
+		public int compare(Integer arg0, Integer arg1) {
+			// TODO Auto-generated method stub
+			
+			if(sortProb[arg0] > sortProb[arg1])
+				return -1;
+			else if(sortProb[arg0] < sortProb[arg1])
+				return 1;
+			else
+				return 0;
+		}
 	}
 }

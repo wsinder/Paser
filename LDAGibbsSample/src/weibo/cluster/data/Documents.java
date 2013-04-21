@@ -27,7 +27,7 @@ public class Documents {
 	}
 	
 	public Map<String, Integer> getTermToIndexMap(){
-		return termToIndexMap != null ? termCountMap : (termToIndexMap = new HashMap<String, Integer>());
+		return termToIndexMap != null ? termToIndexMap : (termToIndexMap = new HashMap<String, Integer>());
 	}
 	
 	public List<String> getIndexToTermMap(){
