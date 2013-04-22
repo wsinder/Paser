@@ -8,6 +8,7 @@ import java.util.List;
 
 import weibo.cluster.configure.LDAModelParameters;
 import weibo.cluster.data.Documents;
+import weibo.webpage.db.WeiBoDBQuery;
 
 public class LDAGibbsSample {
 
@@ -184,8 +185,13 @@ public class LDAGibbsSample {
 	public static void main(String [] args){
 		
 		Documents docSet = new Documents();
-		List<String> texts = new ArrayList<String>();
+//		List<String> texts = new ArrayList<String>();
+		
+		List<String> texts;
 		try {
+			
+			texts = WeiBoDBQuery.getTexts();
+			
 			docSet.readDocs(texts);
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block

@@ -1,8 +1,14 @@
 package weibo.segmentword.ictclas;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-
-import weibo.cluster.data.Documents.Word;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ICTCLAS {
@@ -67,7 +73,46 @@ public class ICTCLAS {
 	public native boolean ICTCLAS_SetPOSmap(int nPOSmap);
 	
 	public static void main(String[] args) throws UnsupportedEncodingException{
-		String sInput = "@小艳子kiki @光影魔术师之择日而栖 @就是爱黑巧克力 尝试新的外景风格，亲们，我有木有拍婚纱照的潜质。";
+		
+/*		File file = new File("./test/test.txt");
+		List<String> texts = new ArrayList();
+		try {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "utf-8"));
+			String temp = null;
+		
+			while((temp = reader.readLine()) != null){
+					texts.add(temp);
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		for(int i = 0; i < texts.size(); i++){
+			String sInput = texts.get(i);
+			if(ICTCLAS_Init(".".getBytes("UTF-8"), 1) == false){
+				System.out.println("初始化失败！");
+				return;
+			}
+			
+			ICTCLAS test = new ICTCLAS();
+			
+			test.ICTCLAS_SetPOSmap(0);
+			
+			byte[] src = sInput.getBytes("UTF-8");
+			byte[] resultByte = test.ICTCLAS_ParagrahProcess(src, 1);
+			String resultStr = new String(resultByte, 0, resultByte.length, "UTF-8");
+			System.out.println(resultStr.trim());
+		}
+		
+		
+		ICTCLAS.ICTCLAS_Exit();
+		*/
+		
+		String sInput = "感觉自己发烧了，群友说是禽流感，事实上是犬流感，窗外阳光灿烂，我却没有温暖，发抖。";
+		System.out.println(sInput);
 		if(ICTCLAS_Init(".".getBytes("UTF-8"), 1) == false){
 			System.out.println("初始化失败！");
 			return;
@@ -77,30 +122,10 @@ public class ICTCLAS {
 		
 		test.ICTCLAS_SetPOSmap(0);
 		
-		byte[] src = sInput.getBytes("UTF-8");
-		byte[] resultByte = test.ICTCLAS_ParagrahProcess(src, 1);
+		byte[] resultByte = test.ICTCLAS_ParagrahProcess(sInput.getBytes("UTF-8"), 1);
 		String resultStr = new String(resultByte, 0, resultByte.length, "UTF-8");
 		System.out.println(resultStr.trim());
-		StringBuilder strBuilder = new StringBuilder(resultStr);
-		while(strBuilder.length() != 0){
-			int slashPos = strBuilder.indexOf("/");
-			String word = strBuilder.substring(0, slashPos);
-			System.out.println(word);
-			int spacePos = strBuilder.indexOf(" ");
-			String attribute = strBuilder.substring(slashPos + 1, spacePos);
-			System.out.println(attribute);
-		    strBuilder.delete(0, spacePos);
-		    
-		    System.out.println(strBuilder);
-		    char ch = strBuilder.charAt(0);
-		    while(String.valueOf(ch).equals(" ")){
-		    	strBuilder.deleteCharAt(0);
-		    	if(strBuilder.length() != 0)
-		    		ch = strBuilder.charAt(0);
-		    	else
-		    		break;
-		    }
-		}
+	
 		ICTCLAS.ICTCLAS_Exit();
 	}		
 }
