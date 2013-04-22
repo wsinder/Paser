@@ -35,6 +35,7 @@ public class LDAGibbsSample {
 		this.K = LDAModelParameters.TOPICNUM;
 		this.burnInPeriod = LDAModelParameters.BURNINPERIOD;
 		this.sampleLag = LDAModelParameters.SAMPLELAG;
+		this.iterations = LDAModelParameters.ITERATIONS;
 	}
 	
 	public LDAGibbsSample(){
@@ -51,6 +52,18 @@ public class LDAGibbsSample {
 		nk = new int[K];
 		phi = new double[K][V];
 		theta = new double[M][K];
+		
+		for(int k = 0; k < K; k++){
+			for(int v = 0; v < V; v++){
+				phi[k][v] = 0;
+			}
+		}
+		
+		for(int m = 0; m < M; m++){
+			for(int k = 0; k < K; k++){
+				theta[m][k] = 0;
+			}
+		}
 		
 		docs = new int[M][];
 		for(int m = 0; m < M; m++){
@@ -70,7 +83,7 @@ public class LDAGibbsSample {
 			
 			z[m] = new int[N];
 			for(int n = 0; n < N; n++){
-				int initTopic = (int)Math.random() * K;
+				int initTopic = (int)(Math.random() * K);
 				z[m][n] = initTopic;
 				nmk[m][initTopic]++;
 				nkt[initTopic][docs[m][n]]++;
@@ -193,6 +206,7 @@ public class LDAGibbsSample {
 			texts = WeiBoDBQuery.getTexts();
 			
 			docSet.readDocs(texts);
+			texts = null;
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -201,18 +215,18 @@ public class LDAGibbsSample {
 		ldaTest.gibbsSample(docSet);
 		
 		double [][] phi = ldaTest.getPhi();
-		int topNum = 20;
+		int topNum = 10;
 		
 		for(int i = 0; i < ldaTest.K; i++){
 			
 			List<Integer> tWordsIndexArray = new ArrayList<Integer>();
-			for(int j = 1; j <= ldaTest.V; j++){
+			for(int j = 0; j < ldaTest.V; j++){
 				tWordsIndexArray.add(new Integer(j));
 			}
 			Collections.sort(tWordsIndexArray, new LDAGibbsSample.TwordsComparable(phi[i]));
 			System.out.println("topic " + i + ":");
 			for(int k = 0; k < topNum; k++){
-				System.out.println(tWordsIndexArray.get(k) + ". " + phi[i][tWordsIndexArray.get(k)]);
+				System.out.println(docSet.getIndexToTermMap().get(tWordsIndexArray.get(k)) + ". " + phi[i][tWordsIndexArray.get(k)]);
 			}
 		}
 		

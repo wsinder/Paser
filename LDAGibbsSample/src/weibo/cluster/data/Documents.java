@@ -44,20 +44,26 @@ public class Documents {
 	 * @throws UnsupportedEncodingException
 	 */
 	public void readDocs(List<String> texts) throws UnsupportedEncodingException{
-				
-//		int i = 0;
-//		for(String text : texts){
-//			System.out.println(++i);
-//			Document doc = new Document(text, termToIndexMap, indexToTermMap, termCountMap);
-//				
-//			docs.add(doc);
-//		}
-		for(int i = 8000; i < texts.size(); i++){
+		
+		if(ICTCLAS.ICTCLAS_Init(".".getBytes("UTF-8"), 1) == false){
+			System.out.println("初始化失败！");
+			return;
+		}
+		
+		/*int i = 0;
+		for(String text : texts){
+			System.out.println(++i);
+			Document doc = new Document(text, termToIndexMap, indexToTermMap, termCountMap);				
+			docs.add(doc);
+		}*/
+		
+		for(int i = 0; i < texts.size(); i++){
 			System.out.println(i);
 			String text = texts.get(i);
 			Document doc = new Document(text, termToIndexMap, indexToTermMap, termCountMap);
 			docs.add(doc);
 		}
+		ICTCLAS.ICTCLAS_Exit();
 	}
 	
 	public class Word{
@@ -108,30 +114,25 @@ public class Documents {
 		 */
 		private void readDoc(String text, List<Word> words) throws UnsupportedEncodingException{
 			System.out.println(text);
-			if(ICTCLAS.ICTCLAS_Init(".".getBytes("UTF-8"), 1) == false){
-				System.out.println("初始化失败！");
-				return;
-			}
 			
 			ICTCLAS test = new ICTCLAS();		
 			test.ICTCLAS_SetPOSmap(0);
 	
-			byte[] resultByte = test.ICTCLAS_ParagrahProcess(text.getBytes("UTF-8"), 1);
-			
-			ICTCLAS.ICTCLAS_Exit();
+			byte[] resultByte = test.ICTCLAS_ParagrahProcess(text.getBytes("UTF-8"), 1);			
 			String resultStr = new String(resultByte, 0, resultByte.length, "UTF-8");
 			System.out.println(resultStr);
+
 			StringBuilder strBuilder = new StringBuilder(resultStr);
 			while(strBuilder.length() != 0){
 				
 				Word word = new Word();
 				
-				int slashPos = strBuilder.indexOf("/");			
+				int slashPos = (slashPos = strBuilder.indexOf("/")) == 0 ? 1 : slashPos;			
 				int spacePos = strBuilder.indexOf(" ");				
 				if(slashPos != -1 && spacePos != -1 && slashPos + 1 < spacePos){
 					word.word = strBuilder.substring(0, slashPos);
 					word.attribute = strBuilder.substring(slashPos + 1, spacePos);
-					if(word.attribute.charAt(0) != 'w')
+					if(word.attribute.charAt(0) != 'w' && word.word.charAt(0) != '@')
 						words.add(word);					
 				}
 				

@@ -15,7 +15,7 @@ public class WeiBoDBQuery {
 		
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://10.110.139.147:3306/weibo",
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/weibo",
 					"admin", "admin");
 			if(!conn.isClosed()){
 				System.out.println("succeeded connecting to database");
@@ -30,8 +30,7 @@ public class WeiBoDBQuery {
 	
 	
 	/**
-	 * 鏁版嵁搴撳瓧娈�id(int)锛�nickname(String)锛�homepageurl(String), authtype(int), weibovip(int), weibodaren(int), maintext(String), 
-	 * 		repostnum(int), commentnum(int), time();
+	 * 
 	 * @param stmt
 	 * @param colName
 	 * @return
@@ -44,9 +43,8 @@ public class WeiBoDBQuery {
 		return rs;
 	}
 	/**
-	 * 鍙栧嚭鏌愪竴澶╃殑姝ｆ枃鏁版嵁锛屽苟鎸夋椂闂村厛鍚庢帓搴�
-	 * @param stmt
-	 * @param time 渚嬪锛�989-1-1锛�989-01-01锛�1989/1/1; 1989/01/01; 19890101; 890101; 89/1/1绛夌瓑
+	 *@param stmt
+	 * @param 
 	 * @return
 	 * @throws SQLException
 	 */
@@ -57,8 +55,7 @@ public class WeiBoDBQuery {
 	}
 	
 	/**
-	 * 寰楀埌鐢ㄦ埛鐨勬暟鐩紝涓嶉噸澶�
-	 * @param stmt
+	 *  @param stmt
 	 * @return
 	 * @throws SQLException 
 	 */
@@ -70,7 +67,6 @@ public class WeiBoDBQuery {
 	
 	
 	/**
-	 * 寰楀埌鎵�湁鐨勬暟鎹�
 	 * @param stmt
 	 * @return
 	 * @throws SQLException
@@ -91,6 +87,12 @@ public class WeiBoDBQuery {
 			ResultSet rs = getSpecificColumn(stmt, "maintext");
 			while(rs.next()){
 				String text = rs.getString(1);
+				if(text.contains("\u301c"))
+					text = text.replaceAll("\\u301c", "\uff5e");
+				if(text.contains("\u22ef"))
+					text = text.replaceAll("\\u22ef", "\u2026");
+				if(text.contains("\u2022"))
+					text = text.replaceAll("\\u2022", "");
 				System.out.println(text);
 				strs.add(text);
 			}

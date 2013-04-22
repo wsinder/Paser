@@ -1,14 +1,13 @@
 package weibo.segmentword.ictclas;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import weibo.webpage.db.WeiBoDBQuery;
+
+import com.mysql.jdbc.Connection;
 
 
 public class ICTCLAS {
@@ -110,8 +109,34 @@ public class ICTCLAS {
 		
 		ICTCLAS.ICTCLAS_Exit();
 		*/
+		String sInput = null;
+		Connection conn = (Connection) WeiBoDBQuery.getConnection();
+		try {
+			Statement stmt = conn.createStatement();
+			String strsql = "select maintext from vtable where id=254953";
+			ResultSet rs = stmt.executeQuery(strsql);
+			if(rs.next())
+				sInput = rs.getString(1);
+			
+			if(sInput.contains("\u301c")){
+				sInput = sInput.replaceAll("\\u301c", "\uff5e");
+			}
+			if(sInput.contains("\u22ef"))
+				sInput = sInput.replaceAll("\\u22ef", "\u2026");
+			if(sInput.contains("\u2022"))
+				sInput = sInput.replaceAll("\\u2022", "");
+			String str = "";
+			for(int i = 0; i < sInput.length(); i++){
+				int ch = (int)sInput.charAt(i);
+				str += "\\u" + Integer.toHexString(ch);
+			}
+			System.out.println(str);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		String sInput = "感觉自己发烧了，群友说是禽流感，事实上是犬流感，窗外阳光灿烂，我却没有温暖，发抖。";
+//		sInput = "小朋友出生以来，每天夜里醒来哭邻居院子里的公鸡准陪着啼叫，时间久了，这一哭一啼的两个似乎成了高山流水的知音。不过，因为“禽流感”事件，昨天主人不得不把公鸡杀了?对我们来说，这是一只特别的鸡。此时此刻，我们惦记它。｜公鸡哥哥，你在天上要都好哦｜";
 		System.out.println(sInput);
 		if(ICTCLAS_Init(".".getBytes("UTF-8"), 1) == false){
 			System.out.println("初始化失败！");
@@ -127,5 +152,5 @@ public class ICTCLAS {
 		System.out.println(resultStr.trim());
 	
 		ICTCLAS.ICTCLAS_Exit();
-	}		
+	}
 }
